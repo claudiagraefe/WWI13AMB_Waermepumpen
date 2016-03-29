@@ -18,15 +18,19 @@ public class Waermepumpen_Controll {
 			wp.setId(i + 1);
 			wp.setLeistung(7 + (int) (Math.random() * 9));
 			sf.setMax_strom(sf.getMax_strom() + wp.getLeistung());
+			
+			double x_kord = Math.round((49.3587 + (Math.random() * 0.0762))*10000)/10000.0;
+			double y_kord = Math.round((8.6171 + (Math.random() * 0.1009))*10000)/10000.0;
+			wp.setLocation(x_kord+";"+y_kord);
 
 			wp.setOfftime(0);
 			pumpen_hd.add(wp);
 		}
 
-		/**
-		 * for (Waermepumpe p : pumpen_hd) { System.out.println(p.getId() +
-		 * " Leistung: " + p.getLeistung() + " kW"); }
-		 */
+		
+		  for (Waermepumpe p : pumpen_hd) { System.out.println(p.getId() +
+		  " Leistung: " + p.getLeistung() + " kW" + ", " +p.getLocation()); }
+		 
 
 		/*
 		 * Initialisierung der Werte des Stromgraphen 
@@ -50,9 +54,11 @@ public class Waermepumpen_Controll {
 			stromgraph.add(s);
 		}
 
-		for (aktueller_Strom st : stromgraph) {
-			System.out.println(st.getTime() + " Strom: " + st.getStrom() + " kW");
-		}
+		/*for (aktueller_Strom st : stromgraph) {
+		*	System.out.println(st.getTime() + " Strom: " + st.getStrom() + " kW" );
+		*}
+		*/
+		
 
 	}
 }
