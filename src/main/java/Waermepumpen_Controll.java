@@ -24,7 +24,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	public static void main(String[] args) {
 		
 		/*
-		 * Line Chart
+		 * Line Chart Initialisierung in der Main 
 		 */
         final Waermepumpen_Controll demo = new Waermepumpen_Controll("Line Chart Demo");
         demo.pack();
@@ -82,7 +82,10 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			stromgraph.add(s);
 		}
 
-		
+		/*
+		 * Visualisierung des Stromverlaufes mittels Lane Chart
+		 * Befüllen des Datasets mit den ermittelten Werten
+		 */
 		for (aktueller_Strom st : stromgraph) {
 		//	System.out.println(st.getTime() + " Strom: " + st.getStrom() + " kW" );
 			dataset.addValue(st.getStrom(), series1, Double.toString(st.getTime()));
@@ -106,13 +109,8 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	        setContentPane(chartPanel);
 	    }
 
-	    
-	    /**
-	     * Creates a sample chart.
-	     * 
-	     * @param dataset  a dataset.
-	     * 
-	     * @return The chart.
+	    /*
+	     * Personalisierung der Ausgabe GUI
 	     */
 	    private JFreeChart createChart(final CategoryDataset dataset) {
 	        
@@ -145,17 +143,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 	        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 	        rangeAxis.setAutoRangeIncludesZero(true);
-
-	        // ****************************************************************************
-	        // * JFREECHART DEVELOPER GUIDE                                               *
-	        // * The JFreeChart Developer Guide, written by David Gilbert, is available   *
-	        // * to purchase from Object Refinery Limited:                                *
-	        // *                                                                          *
-	        // * http://www.object-refinery.com/jfreechart/guide.html                     *
-	        // *                                                                          *
-	        // * Sales are used to provide funding for the JFreeChart project - please    * 
-	        // * support us so that we can continue developing free software.             *
-	        // ****************************************************************************
 	        
 	        // customise the renderer...
 	        final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
@@ -184,6 +171,16 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	        return chart;
 	    }
 	    
+        // ****************************************************************************
+        // * JFREECHART DEVELOPER GUIDE                                               *
+        // * The JFreeChart Developer Guide, written by David Gilbert, is available   *
+        // * to purchase from Object Refinery Limited:                                *
+        // *                                                                          *
+        // * http://www.object-refinery.com/jfreechart/guide.html                     *
+        // *                                                                          *
+        // * Sales are used to provide funding for the JFreeChart project - please    * 
+        // * support us so that we can continue developing free software.             *
+        // ****************************************************************************  
 
 
 	
