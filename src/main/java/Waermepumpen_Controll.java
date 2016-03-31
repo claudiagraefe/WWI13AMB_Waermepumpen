@@ -90,9 +90,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		//	System.out.println(st.getTime() + " Strom: " + st.getStrom() + " kW" );
 			dataset.addValue(st.getStrom(), series1, Double.toString(st.getTime()));
 		}
-		
-		
-		
 
 	}
 	
@@ -170,18 +167,5 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	        
 	        return chart;
 	    }
-	    
-        // ****************************************************************************
-        // * JFREECHART DEVELOPER GUIDE                                               *
-        // * The JFreeChart Developer Guide, written by David Gilbert, is available   *
-        // * to purchase from Object Refinery Limited:                                *
-        // *                                                                          *
-        // * http://www.object-refinery.com/jfreechart/guide.html                     *
-        // *                                                                          *
-        // * Sales are used to provide funding for the JFreeChart project - please    * 
-        // * support us so that we can continue developing free software.             *
-        // ****************************************************************************  
-
-
 	
 }
