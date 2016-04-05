@@ -64,7 +64,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 					.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
 			double y_kord = Math
 					.round((8.6171 + (Math.random() * 0.1009)) * 10000) / 10000.0;
-			wp.setLocation(x_kord + ";" + y_kord);
+			wp.setLocation(x_kord + ", " + y_kord);
 
 			wp.setOfftime(0);
 			wpliste.add(wp);
