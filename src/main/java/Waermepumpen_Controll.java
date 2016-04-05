@@ -18,8 +18,12 @@ import org.jfree.ui.RefineryUtilities;
 
 
 public class Waermepumpen_Controll extends ApplicationFrame {
+	private static final long serialVersionUID = 1L;
 	final static DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	final static String series1 = "aktueller Verbrauch";
+	public static List<Waermepumpe> wpliste;
+	public static List<aktueller_Strom> stromliste;
+	
 	
 	public static void main(String[] args) {
 		
@@ -32,8 +36,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
         demo.setVisible(true);
 		
 		int anzahl_pumpen = 100;
-
-		List<Waermepumpe> pumpen_hd = new LinkedList<>();
+		wpliste  = new LinkedList<>();
 		Stromfluss sf = new Stromfluss();
 		sf.setIntervall(5);
 
@@ -52,18 +55,17 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			wp.setLocation(x_kord+";"+y_kord);
 
 			wp.setOfftime(0);
-			pumpen_hd.add(wp);
+			wpliste.add(wp);
 		}
-
 		
-		  for (Waermepumpe p : pumpen_hd) { System.out.println(p.getId() +
+		  for (Waermepumpe p : wpliste) { System.out.println(p.getId() +
 		  " Leistung: " + p.getLeistung() + " kW" + ", " +p.getLocation()); }
 		 
 
 		/*
 		 * Initialisierung der Werte des Stromgraphen 
 		 */
-		List<aktueller_Strom> stromgraph = new LinkedList<>();
+		stromliste = new LinkedList<>();
 		double alpha = 0.3;
 		double nw = sf.getMax_strom() / 2;
 		int time_max = 300;
@@ -79,14 +81,14 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			if(nw > sf.getMax_strom()){
 				nw = sf.getMax_strom() / 2;
 			}
-			stromgraph.add(s);
+			stromliste.add(s);
 		}
 
 		/*
 		 * Visualisierung des Stromverlaufes mittels Lane Chart
 		 * Befüllen des Datasets mit den ermittelten Werten
 		 */
-		for (aktueller_Strom st : stromgraph) {
+		for (aktueller_Strom st : stromliste) {
 		//	System.out.println(st.getTime() + " Strom: " + st.getStrom() + " kW" );
 			dataset.addValue(st.getStrom(), series1, Double.toString(st.getTime()));
 		}
