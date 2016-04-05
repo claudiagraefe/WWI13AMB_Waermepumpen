@@ -6,8 +6,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
-
-
+	<!-- Dependency Apache Spark -->
+		<dependency>
+		    <groupId>com.sparkjava</groupId>
+		    <artifactId>spark-core</artifactId>
+		    <version>2.3</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
