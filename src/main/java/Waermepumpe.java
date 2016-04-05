@@ -3,6 +3,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Waermepumpe {
 	private int id;
 	private String location;
+	private double x_koord;
+	private double y_koord;
 	private int leistung;
 	private double offtime;
 
@@ -42,6 +44,22 @@ public class Waermepumpe {
 
 	public void setOfftime(double offtime) {
 		this.offtime = offtime;
+	}
+	
+	public double getX_koord() {
+		return x_koord;
+	}
+
+	public void setX_koord(double x_kord) {
+		this.x_koord = x_kord;
+	}
+
+	public double getY_koord() {
+		return y_koord;
+	}
+
+	public void setY_koord(double y_koord) {
+		this.y_koord = y_koord;
 	}
 
 }

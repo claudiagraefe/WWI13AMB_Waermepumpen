@@ -17,7 +17,6 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Waermepumpen_Controll extends ApplicationFrame {
@@ -29,94 +28,48 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	public static List<aktueller_Strom> stromliste;
 	public static ObjectMapper mapper = new ObjectMapper(); 
 
+
 	public static void main(String[] args) {
 		externalStaticFileLocation("src/main/resources");
 		get("/wp/list", (req, res) -> {
 			return mapper.writeValueAsString(wpliste);
 		});
-		
-		
-			/*
-		 * Line Chart Initialisierung in der Main
-		 */
+
+		// Line Chart Initialisierung in der Main
 		final Waermepumpen_Controll demo = new Waermepumpen_Controll(
 				"Wärmepumpenregelung Heidelberg");
 		demo.pack();
 		RefineryUtilities.centerFrameOnScreen(demo);
 		demo.setVisible(true);
-
-		int anzahl_pumpen = 100;
-		wpliste = new LinkedList<>();
+		
 		Stromfluss sf = new Stromfluss();
 		sf.setIntervall(5);
 
-		/*
-		 * Initialisieren der Waermepumpen
-		 */
-		for (int i = 0; i < anzahl_pumpen; i++) {
-			Waermepumpe wp = new Waermepumpe();
+		// Initialisierung von Waermepumpen und Stromverbrauch
+		setWaermepumpenliste(sf);
+		setStromliste(sf);
 
-			wp.setId(i + 1);
-			wp.setLeistung(7 + (int) (Math.random() * 9));
-			sf.setMax_strom(sf.getMax_strom() + wp.getLeistung());
-
-			double x_kord = Math
-					.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
-			double y_kord = Math
-					.round((8.6171 + (Math.random() * 0.1009)) * 10000) / 10000.0;
-			wp.setLocation(x_kord + ", " + y_kord);
-
-			wp.setOfftime(0);
-			wpliste.add(wp);
-		}
-
-		for (Waermepumpe p : wpliste) {
-			System.out.println(p.getId() + " Leistung: " + p.getLeistung()
-					+ " kW" + ", " + p.getLocation());
-		}
-
-		/*
-		 * Initialisierung der Werte des Stromgraphen
-		 */
-		stromliste = new LinkedList<>();
-		double alpha = 0.3;
-		double nw = sf.getMax_strom() / 2;
-		int time_max = 300;
-
-		for (int i = 0; i < time_max; i++) {
-			aktueller_Strom s = new aktueller_Strom();
-			s.setTime(i);
-			s.setStrom(nw);
-			nw = Math
-					.round((nw * alpha) + (Math.random() * (1 - alpha) * 1000));
-			/*
-			 * Um auszuschließen, dass Werte über unserem maximalen Strom
-			 * ausgegeben werden
-			 */
-			if (nw > sf.getMax_strom()) {
-				nw = sf.getMax_strom() / 2;
-			}
-			stromliste.add(s);
-		}
-
-		/*
-		 * Visualisierung des Stromverlaufes mittels Lane Chart Befüllen des
-		 * Datasets mit den ermittelten Werten
-		 */
+		// Visualisierung des Stromverlaufes mittels Lane Chart Befüllen des
+		// Datasets mit den ermittelten Werten
 		for (aktueller_Strom st : stromliste) {
 			// System.out.println(st.getTime() + " Strom: " + st.getStrom() +
 			// " kW" );
 			dataset.addValue(st.getStrom(), series1,
 					Double.toString(st.getTime()));
 		}
+		
+		// Ausgabe der Daten der Waermepumpen
+		for (Waermepumpe p : wpliste) {
+			System.out.println(p.getId() + " Leistung: " + p.getLeistung()
+					+ " kW" + ", " + p.getLocation());
+		}
 
-		new JavaSpark(new Waermepumpen_Controll(null));
 	}
 
-	/*
-	 * Line Chart
+	/**
+	 * @Describtion Constructor fuer Line Chart
+	 * @param title
 	 */
-
 	public Waermepumpen_Controll(final String title) {
 		super(title);
 		// final CategoryDataset dataset1 = dataset;
@@ -126,8 +79,10 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		setContentPane(chartPanel);
 	}
 
-	/*
-	 * Personalisierung der Ausgabe GUI
+	/**
+	 * @Describtion Personalisierung der Ausgabe GUI
+	 * @param dataset
+	 * @return
 	 */
 	private JFreeChart createChart(final CategoryDataset dataset) {
 
@@ -142,13 +97,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 				true, // tooltips
 				false // urls
 				);
-
-		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
-		// final StandardLegend legend = (StandardLegend) chart.getLegend();
-		// legend.setDisplaySeriesShapes(true);
-		// legend.setShapeScaleX(1.5);
-		// legend.setShapeScaleY(1.5);
-		// legend.setDisplaySeriesLines(true);
 
 		chart.setBackgroundPaint(Color.white);
 
@@ -178,6 +126,81 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		// OPTIONAL CUSTOMISATION COMPLETED.
 
 		return chart;
+	}
+
+	/**
+	 * @Describtion Initialisierung der Werte der Wärmepumpen
+	 * @param sf
+	 */
+	public static void setWaermepumpenliste(Stromfluss sf) {
+		int anzahl_pumpen = 100;
+		wpliste = new LinkedList<>();
+
+		for (int i = 0; i < anzahl_pumpen; i++) {
+			Waermepumpe wp = new Waermepumpe();
+
+			wp.setId(i + 1);
+			wp.setLeistung(7 + (int) (Math.random() * 9));
+			sf.setMax_strom(sf.getMax_strom() + wp.getLeistung());
+
+			double x_kord = Math
+					.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
+			double y_kord = Math
+					.round((8.6171 + (Math.random() * 0.1009)) * 10000) / 10000.0;
+			wp.setLocation(x_kord + ", " + y_kord);
+			wp.setX_koord(x_kord);
+			wp.setY_koord(y_kord);
+			wp.setOfftime(0);
+			wpliste.add(wp);
+		}
+
+		for (Waermepumpe p : wpliste) {
+			System.out.println(p.getId() + " Leistung: " + p.getLeistung()
+					+ " kW" + ", " + p.getLocation());
+		}
+
+		/*
+		 * Initialisierung der Werte des Stromgraphen
+		 */
+	}
+
+	/**
+	 * @Description Initialisierung der Werte des Stromgraphen
+	 * @param sf
+	 */
+	public static void setStromliste(Stromfluss sf) {
+		stromliste = new LinkedList<>();
+
+		double alpha = 0.3;
+		double nw = sf.getMax_strom() / 2;
+		int time_max = 300;
+
+		for (int i = 0; i < time_max; i++) {
+			aktueller_Strom s = new aktueller_Strom();
+			s.setTime(i);
+			s.setStrom(nw);
+			nw = Math
+					.round((nw * alpha) + (Math.random() * (1 - alpha) * 1000));
+			/*
+			 * Um auszuschließen, dass Werte über unserem maximalen Strom
+			 * ausgegeben werden
+			 */
+			if (nw > sf.getMax_strom()) {
+				nw = sf.getMax_strom() / 2;
+			}
+			stromliste.add(s);
+		}
+
+		//Visualisierung des Stromverlaufes mittels Lane Chart Befüllen desDatasets mit den ermittelten Werten
+		 
+		for (aktueller_Strom st : stromliste) {
+			// System.out.println(st.getTime() + " Strom: " + st.getStrom() +
+			// " kW" );
+			dataset.addValue(st.getStrom(), series1,
+					Double.toString(st.getTime()));
+		}
+
+		new JavaSpark(new Waermepumpen_Controll(null));
 	}
 
 }
