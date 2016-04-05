@@ -1,14 +1,16 @@
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Waermepumpe {
 	private int id;
 	private String location;
 	private int leistung;
 	private double offtime;
-		
+
 	/*
 	 * Getter & Setter
 	 */
-	
+
+	@JsonProperty("id")
 	public int getId() {
 		return id;
 	}
@@ -25,6 +27,7 @@ public class Waermepumpe {
 		this.leistung = leistung;
 	}
 
+	@JsonProperty("location")
 	public String getLocation() {
 		return location;
 	}
