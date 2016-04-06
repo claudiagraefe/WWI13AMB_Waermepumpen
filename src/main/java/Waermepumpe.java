@@ -7,6 +7,7 @@ public class Waermepumpe {
 	private double y_koord;
 	private int leistung;
 	private double offtime;
+	private String name;
 
 	/*
 	 * Getter & Setter
@@ -45,7 +46,7 @@ public class Waermepumpe {
 	public void setOfftime(double offtime) {
 		this.offtime = offtime;
 	}
-	
+
 	public double getX_koord() {
 		return x_koord;
 	}
@@ -60,6 +61,15 @@ public class Waermepumpe {
 
 	public void setY_koord(double y_koord) {
 		this.y_koord = y_koord;
+	}
+
+	@JsonProperty("name")
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

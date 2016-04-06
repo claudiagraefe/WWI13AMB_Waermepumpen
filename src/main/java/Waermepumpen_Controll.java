@@ -26,10 +26,14 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	final static String series1 = "aktueller Verbrauch";
 	public static List<Waermepumpe> wpliste;
 	public static List<aktueller_Strom> stromliste;
-	public static ObjectMapper mapper = new ObjectMapper(); 
-
+	public static ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] args) {
+
+		// Umwandlung der Ergebnisse in einen JSON String zur Weiterverarbeitung
+		// in Javascript.
+		// Abrufbar unter der URL /wp/list
+
 		externalStaticFileLocation("src/main/resources");
 		get("/wp/list", (req, res) -> {
 			return mapper.writeValueAsString(wpliste);
@@ -41,7 +45,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		demo.pack();
 		RefineryUtilities.centerFrameOnScreen(demo);
 		demo.setVisible(true);
-		
+
 		Stromfluss sf = new Stromfluss();
 		sf.setIntervall(5);
 
@@ -57,7 +61,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			dataset.addValue(st.getStrom(), series1,
 					Double.toString(st.getTime()));
 		}
-		
+
 		// Ausgabe der Daten der Waermepumpen
 		for (Waermepumpe p : wpliste) {
 			System.out.println(p.getId() + " Leistung: " + p.getLeistung()
@@ -139,13 +143,14 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		for (int i = 0; i < anzahl_pumpen; i++) {
 			Waermepumpe wp = new Waermepumpe();
 
+			wp.setName("" + i);
 			wp.setId(i + 1);
 			wp.setLeistung(7 + (int) (Math.random() * 9));
 			sf.setMax_strom(sf.getMax_strom() + wp.getLeistung());
 
-			double x_kord = Math
-					.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
 			double y_kord = Math
+					.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
+			double x_kord = Math
 					.round((8.6171 + (Math.random() * 0.1009)) * 10000) / 10000.0;
 			wp.setLocation(x_kord + ", " + y_kord);
 			wp.setX_koord(x_kord);
@@ -156,7 +161,8 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 
 		for (Waermepumpe p : wpliste) {
 			System.out.println(p.getId() + " Leistung: " + p.getLeistung()
-					+ " kW" + ", " + p.getLocation());
+					+ " kW" + ", " + p.getLocation() + ", " + "Name: "
+					+ p.getName());
 		}
 
 		/*
@@ -191,8 +197,9 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			stromliste.add(s);
 		}
 
-		//Visualisierung des Stromverlaufes mittels Lane Chart Befüllen desDatasets mit den ermittelten Werten
-		 
+		// Visualisierung des Stromverlaufes mittels Lane Chart Befüllen
+		// desDatasets mit den ermittelten Werten
+
 		for (aktueller_Strom st : stromliste) {
 			// System.out.println(st.getTime() + " Strom: " + st.getStrom() +
 			// " kW" );
