@@ -7,18 +7,13 @@
 	content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
 
-<link rel="stylesheet"
-	href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-<link
-	href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.css'
-	rel='stylesheet' />
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.css' rel='stylesheet' />
 <script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.css'
-	rel='stylesheet' />
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
 
 
-<script
-	src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.js'></script>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.js'></script>
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -98,6 +93,29 @@ body {
 
 			$.getJSON('/wp/list', function(data) {
 
+				map.addSource(data[3].name, {
+					"type" : "geojson",
+					"data" : {
+						"type":"FeatureCollection",
+						"features":[{
+							"type":"Feature",
+							"geometry":{
+								"coordinates":[8.669242,49.433752],
+								"type":"Point"
+							},
+							"properties":{
+								"id": "Test",
+								"title":"",
+								"description":"",
+								"marker-size":"small",
+								"marker-color":"#f86767",
+								"marker-symbol":"post"
+							}
+						} ]	
+					}
+				});
+				
+				
 				console.log(data);
 				for (var i = 0; i < 2; i++) {
 
@@ -117,13 +135,15 @@ body {
 								},
 								"properties" : {
 									"title" : data[i].name,
-									"marker-color" : "000",
+									"marker-color" : "#000",
 									"marker-symbol" : "post"
 								}
 							} ]
 						}
 					});
-
+					
+				
+					
 					map.addLayer({
 						"id" : data[i].name,
 						//"id" : "Pumpe",
