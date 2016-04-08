@@ -5,10 +5,6 @@
 <title>Multiple differently styled clusters</title>
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-
-
-
-
 <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -28,9 +24,15 @@
 <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
 <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
 
+<!-- Leaflet Awesome Marker zum Designen der Marker -->
 <script src="leaflet.awesome-markers.js"></script>
 <script src="leaflet.awesome-markers.min.js"></script>
 <link rel="stylesheet" href="leaflet.awesome-markers.css">
+
+<!-- Leaflet Extra Marker zum Designen der Marker  -->
+
+<script src="leaflet.extra-markers.min.js"></script>
+<link rel="stylesheet" href="leaflet.extra-markers.min.css">
 
 
 
@@ -41,14 +43,17 @@
 var marker;
 
 // Creates a red marker with the coffee icon
-var redMarker = L.AwesomeMarkers.icon({
-  icon: 'coffee',
-  markerColor: 'red'
-});
+//var redMarker = L.AwesomeMarkers.icon({
+//  icon: 'coffee',
+//  markerColor: 'red'
+//});
 //Creates a red marker with the coffee icon
-var greenMarker = L.AwesomeMarkers.icon({
-  markerColor: 'black'
-});
+//var greenMarker = L.AwesomeMarkers.icon({
+//  markerColor: 'black'
+//});
+
+
+
 
 L.mapbox.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
 // Here we don't use the second argument to map, since that would automatically
@@ -90,47 +95,61 @@ L.mapbox.featureLayer()
     });
 });
 
-//var polygon = L.polygon( [ [ 49.4349, 8.6171, ],
-	//						[ 49.3587, 8.6171  ], [ 49.3587, 8.7180  ],
-		//					[ 49.4349, 8.7180 ] ]).addTo(map);
 		
-		// define rectangle geographical bounds
+// Umrandung Heidelberg
 var bounds = [[ 49.4349, 8.6171 ], [ 49.3587, 8.6171  ], [ 49.3587, 8.7180  ],
       							[ 49.4349, 8.7180 ]];
 
-// create an orange rectangle
+// Design der Umrandung
 L.rectangle(bounds, {color: "#000000", weight: 2, fillColor: "transparent" }).addTo(map);
-L.marker([49.4349, 8.6171], {icon: redMarker}).addTo(map);
 
+//L.marker([49.4349, 8.6171], {icon: redMarker}).addTo(map);
+
+
+//Funktion, die das JSON liest und verarbeitet
     $.getJSON('/wp/list', function(data) {
         console.log(data);
         
-        for (var i = 0; i < 100; i++) {
+        for (var i = 0; i < 10; i++) {
         	
+        	// Erstellt grüne Marker, die durchnummeriert werden
+        	var greenMarker = L.ExtraMarkers.icon({
+        		icon: 'fa-number', 
+        		number: i+1,
+        		markerColor: 'green-light'
+        	});
+        	
+        	// Erstellt rote Marker, die durchnummeriert werden 
+        	var redMarker = L.ExtraMarkers.icon({
+        		icon: 'fa-number', 
+        		number: i+1,
+        		markerColor: 'red'
+        	});
 
 
 			console.log(data[i].location);
 			console.log(data[i].name);
 			
-			if (i <= 50)
+			if (i <= 5)
 				{
-				 L.marker([data[i].y_koord,
-							data[i].x_koord ], {icon: redMarker}).addTo(map);
-				} else {
+			
 				 L.marker([data[i].y_koord,
 							data[i].x_koord ], {icon: greenMarker}).addTo(map);
+				} else {
+				 L.marker([data[i].y_koord,
+							data[i].x_koord ], {icon: redMarker}).addTo(map);
 				}
      
-      
         }
     });
     
+    //Gibt bei einem Klick die aktuelle Position aus
     var popup = L.popup();
 
     function onMapClick(e) {
         popup
             .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng.toString())
+            .setContent("Auf der Karte wurde folgender Punkt: " + e.latlng.toString() + " ausgewählt")
             .openOn(map);
     }
 
