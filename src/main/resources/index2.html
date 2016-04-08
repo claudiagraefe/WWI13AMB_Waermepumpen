@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<title></title>
+<meta name='viewport'
+	content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+
+
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.js'></script>
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<style>
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 100%;
+}
+</style>
+
+<script>
+	var test;
+	var anzahl_pumpen = 100;
+
+	function init() {
+
+		//Map init
+		mapboxgl.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
+		var map = new mapboxgl.Map({
+			container : 'map', // container id
+			style : 'mapbox://styles/mapbox/streets-v8', //stylesheet location
+			center : [ 8.667, 49.3968 ], // starting position
+			zoom : 12
+		// starting zoom
+		});
+		//map.attributionControl.setPrefix(''); // Don't show the 'Powered by Leaflet' text.
+
+		//Umrandung Heidelberg
+		map.on('style.load', function() {
+			map.addSource("route", {
+				"type" : "geojson",
+				"data" : {
+					"type" : "Feature",
+					"properties" : {},
+					"geometry" : {
+						"type" : "LineString",
+						"coordinates" : [ [ 8.6171, 49.4349 ],
+								[ 8.6171, 49.3587 ], [ 8.7180, 49.3587 ],
+								[ 8.7180, 49.4349 ], [ 8.6171, 49.4349 ] ]
+					}
+				}
+			});
+
+			// Layout Umrandung 
+			map.addLayer({
+				"id" : "route",
+				"type" : "line",
+				"source" : "route",
+				"layout" : {
+					"line-join" : "round",
+					"line-cap" : "round"
+				},
+				"paint" : {
+					"line-color" : "#888",
+					"line-width" : 5
+				}
+			});
+		});
+
+		// setInterval um regelmäßig die Daten zuladen
+		// im Interval Marker entsprechend löschen und anzeigen
+
+		//setInterval(function() {
+
+		//mögliche Initialisierung Marker
+		//For-Schleife zum Durchlaufen aller Pumpen "anzahl_pumpen" noch einsetzen 
+
+		map.on('style.load', function() {
+
+			$.getJSON('/wp/list', function(data) {
+
+				map.addSource(data[3].name, {
+					"type" : "geojson",
+					"data" : {
+						"type":"FeatureCollection",
+						"features":[{
+							"type":"Feature",
+							"geometry":{
+								"coordinates":[8.669242,49.433752],
+								"type":"Point"
+							},
+							"properties":{
+								"id": "Test",
+								"title":"",
+								"description":"",
+								"marker-size":"small",
+								"marker-color":"#f86767",
+								"marker-symbol":"post"
+							}
+						} ]	
+					}
+				});
+				
+				
+				console.log(data);
+				for (var i = 0; i < 2; i++) {
+
+					console.log(data[i].location);
+					console.log(data[i].name);
+
+					map.addSource(data[i].name, {
+						"type" : "geojson",
+						"data" : {
+							"type" : "FeatureCollection",
+							"features" : [ {
+								"type" : "Feature",
+								"geometry" : {
+									"type" : "Point",
+									"coordinates" : [ data[i].x_koord,
+											data[i].y_koord ]
+								},
+								"properties" : {
+									"title" : data[i].name,
+									"marker-color" : "#000",
+									"marker-symbol" : "post"
+								}
+							} ]
+						}
+					});
+					
+				
+					
+					map.addLayer({
+						"id" : data[i].name,
+						//"id" : "Pumpe",
+						"type" : "symbol",
+						"source" : data[i].name,
+						"layout" : {
+							"icon-image" : "{marker-symbol}-15",
+							"text-field" : "{title}",
+							"text-font" : [ "Open Sans Semibold",
+									"Arial Unicode MS Bold" ],
+							"text-offset" : [ 0, 0.4 ],
+							"text-anchor" : "top"
+						}
+					});
+					//	console.log(test2)
+				}
+			});
+
+		});
+
+		//   var markers = [
+		//                	[ 8.6171, 49.4379, "Big Ben" ],
+		//                 	[ 8.7180, 49.4349, "London Eye" ],
+		//                 	[ 8.6172, 49.4349, "Test" ] 
+		//                 ];
+
+		//Loop through the markers array
+		//             	for (var i=0; i<markers.length; i++) {
+
+		//              var lon = markers[i][0];
+		//              var lat = markers[i][1];
+		//              var popupText = markers[i][2];
+
+		//              var markerLocation = new L.LatLng(lat, lon);
+		//              var marker = new L.Marker(markerLocation);
+		//              map.addLayer(marker);
+
+		//             	marker.bindPopup(popupText);
+
+		//           	}
+
+		//		});
+	}
+
+	//	}, 3*1000);
+
+	//alert(Object.location);
+
+	//	var text = '{ "employees" : [' +
+	//'{ "firstName":"John" , "lastName":"Doe" },' +
+	//'{ "firstName":"Anna" , "lastName":"Smith" },' +
+	//'{ "firstName":"Peter" , "lastName":"Jones" } ]}';
+	//var obj = JSON.parse(text);
+
+	//			document.getElementById("demo").innerHTML =
+	//	obj.employees[1].firstName + " " + obj.employees[1].lastName;
+	//	console.log(obj.employees[1].firstName + " " + obj.employees[1].lastName);
+
+	//}
+</script>
+
+</head>
+<body onLoad="init();">
+
+
+	<div id='map'></div>
+	<div id='map_geo' class='map'></div>
+
+</body>
+</html>
+

@@ -1,217 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset='utf-8' />
-<title></title>
-<meta name='viewport'
-	content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<meta charset=utf-8 />
+<title>Multiple differently styled clusters</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
 
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.css' rel='stylesheet' />
-<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
 
 
-<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.16.0/mapbox-gl.js'></script>
-<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+
+<script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+
 
 <style>
-body {
-	margin: 0;
-	padding: 0;
-}
-
-#map {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 100%;
-}
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
 </style>
+</head>
+<body>
+
+
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' />
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+
+<script src="leaflet.awesome-markers.js"></script>
+<script src="leaflet.awesome-markers.min.js"></script>
+<link rel="stylesheet" href="leaflet.awesome-markers.css">
+
+
+
+<div id='map'></div>
 
 <script>
-	var test;
-	var anzahl_pumpen = 100;
 
-	function init() {
+var marker;
 
-		//Map init
-		mapboxgl.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
-		var map = new mapboxgl.Map({
-			container : 'map', // container id
-			style : 'mapbox://styles/mapbox/streets-v8', //stylesheet location
-			center : [ 8.667, 49.3968 ], // starting position
-			zoom : 12
-		// starting zoom
-		});
-		//map.attributionControl.setPrefix(''); // Don't show the 'Powered by Leaflet' text.
+// Creates a red marker with the coffee icon
+var redMarker = L.AwesomeMarkers.icon({
+  icon: 'coffee',
+  markerColor: 'red'
+});
+//Creates a red marker with the coffee icon
+var greenMarker = L.AwesomeMarkers.icon({
+  markerColor: 'black'
+});
 
-		//Umrandung Heidelberg
-		map.on('style.load', function() {
-			map.addSource("route", {
-				"type" : "geojson",
-				"data" : {
-					"type" : "Feature",
-					"properties" : {},
-					"geometry" : {
-						"type" : "LineString",
-						"coordinates" : [ [ 8.6171, 49.4349 ],
-								[ 8.6171, 49.3587 ], [ 8.7180, 49.3587 ],
-								[ 8.7180, 49.4349 ], [ 8.6171, 49.4349 ] ]
-					}
+L.mapbox.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
+// Here we don't use the second argument to map, since that would automatically
+// load in non-clustered markers from the layer. Instead we add just the
+// backing tileLayer, and then use the featureLayer only for its data.
+var map = L.mapbox.map('map')
+    .setView([49.3968, 8.667 ], 12)
+    .addLayer(L.mapbox.tileLayer('mapbox.streets'));
+
+// Since featureLayer is an asynchronous method, we use the `.on('ready'`
+// call to only use its marker data once we know it is actually loaded.
+L.mapbox.featureLayer()
+    .loadURL('https://www.mapbox.com/mapbox.js/assets/data/stations.geojson')
+    .on('ready', function(e) {
+    // create a new MarkerClusterGroup that will show special-colored
+    // numbers to indicate the type of rail stations it contains
+    function makeGroup(color) {
+      return new L.MarkerClusterGroup({
+        iconCreateFunction: function(cluster) {
+          return new L.DivIcon({
+            iconSize: [20, 20],
+            html: '<div style="text-align:center;color:#fff;background:' +
+            color + '">' + cluster.getChildCount() + '</div>'
+          });
+        }
+      }).addTo(map);
+    }
+    // create a marker cluster group for each type of rail station
+    var groups = {
+      red: makeGroup('red'),
+      green: makeGroup('green'),
+      orange: makeGroup('orange'),
+      blue: makeGroup('blue'),
+      yellow: makeGroup('yellow')
+    };
+    e.target.eachLayer(function(layer) {
+      // add each rail station to its specific group.
+      groups[layer.feature.properties.line].addLayer(layer);
+    });
+});
+
+//var polygon = L.polygon( [ [ 49.4349, 8.6171, ],
+	//						[ 49.3587, 8.6171  ], [ 49.3587, 8.7180  ],
+		//					[ 49.4349, 8.7180 ] ]).addTo(map);
+		
+		// define rectangle geographical bounds
+var bounds = [[ 49.4349, 8.6171 ], [ 49.3587, 8.6171  ], [ 49.3587, 8.7180  ],
+      							[ 49.4349, 8.7180 ]];
+
+// create an orange rectangle
+L.rectangle(bounds, {color: "#000000", weight: 2, fillColor: "transparent" }).addTo(map);
+L.marker([49.4349, 8.6171], {icon: redMarker}).addTo(map);
+
+    $.getJSON('/wp/list', function(data) {
+        console.log(data);
+        
+        for (var i = 0; i < 100; i++) {
+        	
+
+
+			console.log(data[i].location);
+			console.log(data[i].name);
+			
+			if (i <= 50)
+				{
+				 L.marker([data[i].y_koord,
+							data[i].x_koord ], {icon: redMarker}).addTo(map);
+				} else {
+				 L.marker([data[i].y_koord,
+							data[i].x_koord ], {icon: greenMarker}).addTo(map);
 				}
-			});
+     
+      
+        }
+    });
+    
+    var popup = L.popup();
 
-			// Layout Umrandung 
-			map.addLayer({
-				"id" : "route",
-				"type" : "line",
-				"source" : "route",
-				"layout" : {
-					"line-join" : "round",
-					"line-cap" : "round"
-				},
-				"paint" : {
-					"line-color" : "#888",
-					"line-width" : 5
-				}
-			});
-		});
+    function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(map);
+    }
 
-		// setInterval um regelmäßig die Daten zuladen
-		// im Interval Marker entsprechend löschen und anzeigen
-
-		//setInterval(function() {
-
-		//mögliche Initialisierung Marker
-		//For-Schleife zum Durchlaufen aller Pumpen "anzahl_pumpen" noch einsetzen 
-
-		map.on('style.load', function() {
-
-			$.getJSON('/wp/list', function(data) {
-
-				map.addSource(data[3].name, {
-					"type" : "geojson",
-					"data" : {
-						"type":"FeatureCollection",
-						"features":[{
-							"type":"Feature",
-							"geometry":{
-								"coordinates":[8.669242,49.433752],
-								"type":"Point"
-							},
-							"properties":{
-								"id": "Test",
-								"title":"",
-								"description":"",
-								"marker-size":"small",
-								"marker-color":"#f86767",
-								"marker-symbol":"post"
-							}
-						} ]	
-					}
-				});
-				
-				
-				console.log(data);
-				for (var i = 0; i < 2; i++) {
-
-					console.log(data[i].location);
-					console.log(data[i].name);
-
-					map.addSource(data[i].name, {
-						"type" : "geojson",
-						"data" : {
-							"type" : "FeatureCollection",
-							"features" : [ {
-								"type" : "Feature",
-								"geometry" : {
-									"type" : "Point",
-									"coordinates" : [ data[i].x_koord,
-											data[i].y_koord ]
-								},
-								"properties" : {
-									"title" : data[i].name,
-									"marker-color" : "#000",
-									"marker-symbol" : "post"
-								}
-							} ]
-						}
-					});
-					
-				
-					
-					map.addLayer({
-						"id" : data[i].name,
-						//"id" : "Pumpe",
-						"type" : "symbol",
-						"source" : data[i].name,
-						"layout" : {
-							"icon-image" : "{marker-symbol}-15",
-							"text-field" : "{title}",
-							"text-font" : [ "Open Sans Semibold",
-									"Arial Unicode MS Bold" ],
-							"text-offset" : [ 0, 0.4 ],
-							"text-anchor" : "top"
-						}
-					});
-					//	console.log(test2)
-				}
-			});
-
-		});
-
-		//   var markers = [
-		//                	[ 8.6171, 49.4379, "Big Ben" ],
-		//                 	[ 8.7180, 49.4349, "London Eye" ],
-		//                 	[ 8.6172, 49.4349, "Test" ] 
-		//                 ];
-
-		//Loop through the markers array
-		//             	for (var i=0; i<markers.length; i++) {
-
-		//              var lon = markers[i][0];
-		//              var lat = markers[i][1];
-		//              var popupText = markers[i][2];
-
-		//              var markerLocation = new L.LatLng(lat, lon);
-		//              var marker = new L.Marker(markerLocation);
-		//              map.addLayer(marker);
-
-		//             	marker.bindPopup(popupText);
-
-		//           	}
-
-		//		});
-	}
-
-	//	}, 3*1000);
-
-	//alert(Object.location);
-
-	//	var text = '{ "employees" : [' +
-	//'{ "firstName":"John" , "lastName":"Doe" },' +
-	//'{ "firstName":"Anna" , "lastName":"Smith" },' +
-	//'{ "firstName":"Peter" , "lastName":"Jones" } ]}';
-	//var obj = JSON.parse(text);
-
-	//			document.getElementById("demo").innerHTML =
-	//	obj.employees[1].firstName + " " + obj.employees[1].lastName;
-	//	console.log(obj.employees[1].firstName + " " + obj.employees[1].lastName);
-
-	//}
+    map.on('click', onMapClick);
+    
+    
+  
 </script>
 
-</head>
-<body onLoad="init();">
-
-
-	<div id='map'></div>
-	<div id='map_geo' class='map'></div>
 
 </body>
 </html>
-
