@@ -9,6 +9,22 @@ public class Waermepumpe {
 	private double offtime;
 	private String name;
 
+	public Waermepumpe(int i){
+		setName("" + i);
+		setId(i + 1);
+		setLeistung(7 + (int) (Math.random() * 9));
+		
+		y_koord = Math
+				.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
+		x_koord = Math
+				.round((8.6171 + (Math.random() * 0.1009)) * 10000) / 10000.0;
+		setLocation(x_koord + ", " + y_koord);
+		
+		setOfftime(0);
+		
+	}
+	
+	
 	/*
 	 * Getter & Setter
 	 */

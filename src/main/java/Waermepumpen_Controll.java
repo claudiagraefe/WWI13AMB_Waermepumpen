@@ -152,21 +152,8 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		wpliste = new LinkedList<>();
 
 		for (int i = 0; i < anzahl_pumpen; i++) {
-			Waermepumpe wp = new Waermepumpe();
-
-			wp.setName("" + i);
-			wp.setId(i + 1);
-			wp.setLeistung(7 + (int) (Math.random() * 9));
+			Waermepumpe wp = new Waermepumpe(i);
 			sf.setMax_strom(sf.getMax_strom() + wp.getLeistung());
-
-			double y_kord = Math
-					.round((49.3587 + (Math.random() * 0.0762)) * 10000) / 10000.0;
-			double x_kord = Math
-					.round((8.6171 + (Math.random() * 0.1009)) * 10000) / 10000.0;
-			wp.setLocation(x_kord + ", " + y_kord);
-			wp.setX_koord(x_kord);
-			wp.setY_koord(y_kord);
-			wp.setOfftime(0);
 			wpliste.add(wp);
 		}
 
@@ -175,10 +162,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 					+ " kW" + ", " + p.getLocation() + ", " + "Name: "
 					+ p.getName());
 		}
-
-		/*
-		 * Initialisierung der Werte des Stromgraphen
-		 */
 	}
 
 	/**
