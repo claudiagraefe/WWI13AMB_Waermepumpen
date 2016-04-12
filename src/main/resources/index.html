@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>Multiple differently styled clusters</title>
+<title>Wärmepumpenregelung Heidelberg</title>
 <meta name='viewport'
 	content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
@@ -56,24 +56,15 @@ body {
 	<div id='map'></div>
 
 	<script>
+		// Variablendefinition
 		var marker;
 		var helfer = 0;
 		var zeithelfer = 0;
 
-		// Creates a red marker with the coffee icon
-		//var redMarker = L.AwesomeMarkers.icon({
-		//  icon: 'coffee',
-		//  markerColor: 'red'
-		//});
-		//Creates a red marker with the coffee icon
-		//var greenMarker = L.AwesomeMarkers.icon({
-		//  markerColor: 'black'
-		//});
 
+		// Initialisierung MAP, AccessToken von Mapbox
 		L.mapbox.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
-		// Here we don't use the second argument to map, since that would automatically
-		// load in non-clustered markers from the layer. Instead we add just the
-		// backing tileLayer, and then use the featureLayer only for its data.
+		// Initialisierung der Karte mit Angabe, wo das Zentrum liegt
 		var map = L.mapbox.map('map').setView([ 49.3968, 8.667 ], 12).addLayer(
 				L.mapbox.tileLayer('mapbox.streets'));
 
@@ -90,7 +81,8 @@ body {
 		}).addTo(map);
 
 		//L.marker([49.4349, 8.6171]).addTo(map);
-		// map.removeLayer(marker);
+		
+	//	map.removeLayer(marker);
 
 		//Funktion, die das JSON liest und verarbeitet
 		// Daten aus aktueller_Strom.java
@@ -165,7 +157,7 @@ body {
 			});
 		});
 
-		//Gibt bei einem Klick die aktuelle Position aus
+		// Gibt bei einem Klick auf die Karte die aktuelle Position aus
 		var popup = L.popup();
 
 		function onMapClick(e) {
