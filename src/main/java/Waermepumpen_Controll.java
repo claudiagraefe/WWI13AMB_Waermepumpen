@@ -17,6 +17,7 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Waermepumpen_Controll extends ApplicationFrame {
@@ -28,27 +29,23 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	public static List<aktueller_Strom> stromliste;
 	public static ObjectMapper mapper = new ObjectMapper();
 
-
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		// Umwandlung der Ergebnisse in einen JSON String zur Weiterverarbeitung
 		// in Javascript.
 		// Abrufbar unter der URL /wp/list bzw. /strom/list
 
-		//Übergabe wp-Liste aus Waermepumpe.java
+		// Übergabe wp-Liste aus Waermepumpe.java
 		externalStaticFileLocation("src/main/resources");
 		get("/wp/list", (req, res) -> {
 			return mapper.writeValueAsString(wpliste);
-			
+
 		});
-		//Übergabe stromliste aus aktueller_Strom.java
+		// Übergabe stromliste aus aktueller_Strom.java
 		get("/strom/list", (req, res) -> {
 			return mapper.writeValueAsString(stromliste);
-			
-		});
 
-		
-		
+		});
 
 		// Line Chart Initialisierung in der Main
 		final Waermepumpen_Controll demo = new Waermepumpen_Controll(
@@ -78,6 +75,9 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			System.out.println(p.getId() + " Leistung: " + p.getLeistung()
 					+ " kW" + ", " + p.getLocation());
 		}
+
+		ApacheSpark spark = new ApacheSpark();
+		spark.testKwhMonotonSteigend();
 
 	}
 
