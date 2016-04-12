@@ -22,6 +22,7 @@ public class Waermepumpe {
 		this.id = id;
 	}
 
+	@JsonProperty("leistung")
 	public int getLeistung() {
 		return leistung;
 	}
@@ -38,7 +39,7 @@ public class Waermepumpe {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-
+	@JsonProperty("offtime")
 	public double getOfftime() {
 		return offtime;
 	}

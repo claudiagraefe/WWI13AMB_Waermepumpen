@@ -14,5 +14,12 @@ public class JavaSpark {
 			}
 		});
 		// more routes
+		get("/users", new Route() {
+			@Override
+			public Object handle(Request request, Response response) {
+				// process request
+				return Waermepumpen_Controll.stromliste;
+			}
+		});
 	}
 }

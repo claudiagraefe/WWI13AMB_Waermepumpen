@@ -28,16 +28,27 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 	public static List<aktueller_Strom> stromliste;
 	public static ObjectMapper mapper = new ObjectMapper();
 
+
 	public static void main(String[] args) {
 
 		// Umwandlung der Ergebnisse in einen JSON String zur Weiterverarbeitung
 		// in Javascript.
-		// Abrufbar unter der URL /wp/list
+		// Abrufbar unter der URL /wp/list bzw. /strom/list
 
+		//Übergabe wp-Liste aus Waermepumpe.java
 		externalStaticFileLocation("src/main/resources");
 		get("/wp/list", (req, res) -> {
 			return mapper.writeValueAsString(wpliste);
+			
 		});
+		//Übergabe stromliste aus aktueller_Strom.java
+		get("/strom/list", (req, res) -> {
+			return mapper.writeValueAsString(stromliste);
+			
+		});
+
+		
+		
 
 		// Line Chart Initialisierung in der Main
 		final Waermepumpen_Controll demo = new Waermepumpen_Controll(
@@ -208,6 +219,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		}
 
 		new JavaSpark(new Waermepumpen_Controll(null));
+
 	}
 
 }
