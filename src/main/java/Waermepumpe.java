@@ -1,5 +1,7 @@
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Waermepumpe implements Serializable {
 	private int id;
 	private String location;
@@ -25,7 +27,7 @@ public class Waermepumpe implements Serializable {
 	/*
 	 * Getter & Setter
 	 */
-
+	@JsonProperty("id")
 	public int getId() {
 		return id;
 	}
@@ -33,7 +35,7 @@ public class Waermepumpe implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	@JsonProperty("leistung")
 	public int getLeistung() {
 		return leistung;
 	}
@@ -41,7 +43,7 @@ public class Waermepumpe implements Serializable {
 	public void setLeistung(int leistung) {
 		this.leistung = leistung;
 	}
-
+	@JsonProperty("location")
 	public String getLocation() {
 		return location;
 	}
@@ -49,7 +51,7 @@ public class Waermepumpe implements Serializable {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-
+	@JsonProperty("offtime")
 	public int getOfftime() {
 		return offtime;
 	}

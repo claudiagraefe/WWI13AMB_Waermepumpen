@@ -47,6 +47,10 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 
 		});
 
+		
+		
+		
+		
 		// Line Chart Initialisierung in der Main
 		final Waermepumpen_Controll demo = new Waermepumpen_Controll(
 				"Wärmepumpenregelung Heidelberg");
