@@ -1,6 +1,8 @@
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class aktueller_Strom {
+public class aktueller_Strom implements Serializable{
 	private int time;
 	private double strom;
 	

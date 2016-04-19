@@ -21,5 +21,13 @@ public class JavaSpark {
 				return Waermepumpen_Controll.stromliste;
 			}
 		});
+		get("/users", new Route() {
+			@Override
+			public Object handle(Request request, Response response) {
+				// process request
+				return ApacheSpark.result;
+			}
+		});
+		
 	}
 }

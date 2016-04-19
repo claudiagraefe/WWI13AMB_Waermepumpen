@@ -46,10 +46,12 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 			return mapper.writeValueAsString(stromliste);
 
 		});
+		// Übergabe result (AVG aktueller_Strom) aus ApacheSpark.java
+		get("/strom/avg", (req, res) -> {
+			return mapper.writeValueAsString(ApacheSpark.result);
+		});
 
-		
-		
-		
+
 		
 		// Line Chart Initialisierung in der Main
 		final Waermepumpen_Controll demo = new Waermepumpen_Controll(
@@ -64,15 +66,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		// Initialisierung von Waermepumpen und Stromverbrauch
 		setWaermepumpenliste(sf);
 		setStromliste(sf);
-
-		// Visualisierung des Stromverlaufes mittels Lane Chart Befüllen des
-		// Datasets mit den ermittelten Werten
-		for (aktueller_Strom st : stromliste) {
-			// System.out.println(st.getTime() + " Strom: " + st.getStrom() +
-			// " kW" );
-			dataset.addValue(st.getStrom(), series1,
-					Double.toString(st.getTime()));
-		}
 
 		// Ausgabe der Daten der Waermepumpen
 		for (Waermepumpe p : wpliste) {

@@ -60,6 +60,7 @@ body {
 		var marker;
 		var helfer = 0;
 		var zeithelfer = 0;
+		
 
 
 		// Initialisierung MAP, AccessToken von Mapbox
@@ -83,7 +84,14 @@ body {
 		//L.marker([49.4349, 8.6171]).addTo(map);
 		
 	//	map.removeLayer(marker);
+setInterval(function(){
+	$.getJSON('/strom/avg', function(data3) {
+		console.log(data3);
+});
 
+}, 3 * 1000);
+
+	
 		//Funktion, die das JSON liest und verarbeitet
 		// Daten aus aktueller_Strom.java
 		$.getJSON('/strom/list', function(data2) {
