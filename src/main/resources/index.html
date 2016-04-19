@@ -58,9 +58,8 @@ body {
 	<script>
 		// Variablendefinition
 		var marker;
-		var helfer = 0;
-		var zeithelfer = 0;
-		var x = 0;
+		var hilfsvariable_strom = 0;
+		var zaehler_x = 0;
 
 		// Initialisierung MAP, AccessToken von Mapbox
 		L.mapbox.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
@@ -113,17 +112,16 @@ body {
 								markerColor : 'red'
 							});
 
-							console.log(zeithelfer);
-
 							//Helfervariable zum Herausfiltern der Anzahl an Pumpen, die rot sein müssen
 
-							helfer = helfer + data[i].leistung;
+							hilfsvariable_strom = hilfsvariable_strom
+									+ data[i].leistung;
 							//console.log(helfer);
 
 							// Überprüfung ob Wärmepumpe aus = rot oder an = gruen ist 
 
-							console.log(data3[x]);
-							if (helfer <= data3[x]) {
+							console.log(data3[zaehler_x]);
+							if (hilfsvariable_strom <= data3[zaehler_x]) {
 								L.marker([ data[i].y_koord, data[i].x_koord ],
 										{
 											icon : redMarker
@@ -139,13 +137,14 @@ body {
 							}
 
 						}
-						//Zeithelfer um 3 Sekunden erhöhen
-						zeithelfer = zeithelfer + 3;
-						helfer = 0;
 
-						x = x + 1;
-
-					}, 3 * 1000);
+						//hilfsvariable_strom summiert die Stromwerte der Pumpen bis zum aktuellen Verbrauch auf,
+						//so dass diese "rot" markiert werden
+						hilfsvariable_strom = 0;
+						//Mit Hife der Hilfsvariable zaehler_x wird auf die einzelnen AVG-Werte von avg_strom zugegriffen
+						zaehler_x = zaehler_x + 1;
+						//Intervall von 5 Sekunden
+					}, 5 * 1000);
 
 				});
 			});
