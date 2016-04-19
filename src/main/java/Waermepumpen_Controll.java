@@ -48,7 +48,7 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		});
 		// Übergabe result (AVG aktueller_Strom) aus ApacheSpark.java
 		get("/strom/avg", (req, res) -> {
-			return mapper.writeValueAsString(ApacheSpark.result);
+			return mapper.writeValueAsString(ApacheSpark.avg_strom);
 		});
 
 
@@ -161,6 +161,8 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		}
 	}
 
+	
+	
 	/**
 	 * @Description Initialisierung der Werte des Stromgraphen
 	 * @param sf

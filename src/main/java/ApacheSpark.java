@@ -29,15 +29,17 @@ public class ApacheSpark {
 	private static final String host = "localhost";
 	private static final int port = 9999;
 	public static JavaDStream<Double> result;
+	public static double currentValue = 0;
+	public static String currentValue2;
 	
-//	public List<Double> avg_strom;
+	public static List<Double> avg_strom;
 
 	private JavaSparkContext sc;
 	private SQLContext sqlContext;
 	private JavaStreamingContext jssc;
 
 	public ApacheSpark() {
-//		avg_strom = new ArrayList<>();
+		avg_strom = new LinkedList<>();
 
 		// Listen on a server socket and on connection send some \n-delimited
 		// text to the client
@@ -106,8 +108,8 @@ public class ApacheSpark {
 
 		// map
 
-		JavaDStream<String> words = lines.flatMap(x -> Lists.newArrayList(x
-				.split(" ")));
+//		JavaDStream<String> words = lines.flatMap(x -> Lists.newArrayList(x
+//				.split(" ")));
 
 		JavaDStream<Double> numbers = lines.map(x -> Double.parseDouble(x));
 		JavaDStream<Tuple2<Double, Integer>> numbersAndCount = numbers
@@ -118,13 +120,25 @@ public class ApacheSpark {
 
 		result = sumationResult.map(x -> x._1 / x._2);
 		
-		
+		result.foreachRDD(rdd -> {
+			List<Double> values = rdd.collect();
+			for(Double value : values) {
+				System.out.println("nnnnnn: " + value);
+				currentValue = value;
+
+				avg_strom.add(currentValue);
+				
+				
+			}
+			for (Double avg : avg_strom) {
+				System.out.println(avg);
+			}
+			
+		});
+	
 	// double test = Double.valueOf(result.glom());
 	//	avg_strom.add(test);
 			
-
-		result.print();
-
 		// JavaPairDStream<String, Integer> wordCounts = words.mapToPair(
 		// s -> new Tuple2<String, Integer>(s, 7)).reduceByKey(
 		// (i1, i2) -> i1 + i2);

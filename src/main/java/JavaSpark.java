@@ -25,7 +25,7 @@ public class JavaSpark {
 			@Override
 			public Object handle(Request request, Response response) {
 				// process request
-				return ApacheSpark.result;
+				return ApacheSpark.avg_strom;
 			}
 		});
 		
