@@ -27,7 +27,7 @@ body {
 }
 </style>
 </head>
-<body>
+<body onLoad="init();">
 
 
 	<script
@@ -59,6 +59,8 @@ body {
 	<div id='map'></div>
 
 	<script>
+	
+	
 		//Stromgraph zeichnen mit AVG_STROM Werten
 		window.onload = function() {
 
@@ -77,9 +79,10 @@ body {
 			//Startwert x-Achse
 			var xVal = 0;
 			//Max-Wert y-Achse
+// auf MAX-STROM Setzen ! 
 			var yVal = 1000;
 			//Wie schnell sich der Graph voran bewegt 5000 = 5 Sek
-			var updateInterval = 2000;
+			var updateInterval = 5000;
 			var dataLength = 10; // number of dataPoints visible at any point
 
 			var updateChart = function(count) {
@@ -95,7 +98,7 @@ body {
 							x : xVal,
 							y : yVal
 						});
-						xVal = xVal + 4;
+						xVal = xVal + 5;
 					}
 					;
 					if (dps.length > dataLength) {
@@ -114,12 +117,14 @@ body {
 				updateChart()
 			}, updateInterval);
 
-		}
+	}
 
 		// Variablendefinition
 		var marker;
 		var hilfsvariable_strom = 0;
 		var zaehler_x = 0;
+		var roteMarker;
+		var grueneMarker;
 
 		// Initialisierung MAP, AccessToken von Mapbox
 		L.mapbox.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
@@ -138,7 +143,8 @@ body {
 			fillColor : "transparent"
 		}).addTo(map);
 
-		//L.marker([49.4349, 8.6171]).addTo(map);
+		//var test = L.marker([49.4349, 8.6171]).addTo(map);
+		//map.removeLayer(test);
 
 		$.getJSON('/strom/avg', function(data3) {
 
@@ -151,13 +157,14 @@ body {
 				$.getJSON('/wp/list', function(data) {
 					console.log(data);
 
-					// Intervall alle 3 Sekunden
+					// Intervall alle 5 Sekunden
 					setInterval(function() {
-
+					
 						//	console.log(data2);
 						// i= geht pro Zeiteinheit die 100 Elemente durch 
 						for (var i = 0; i < 100; i++) {
 
+							
 							// Erstellt grüne Marker, die durchnummeriert werden
 							var greenMarker = L.ExtraMarkers.icon({
 								icon : 'fa-number',
@@ -180,6 +187,8 @@ body {
 
 							// Überprüfung ob Wärmepumpe aus = rot oder an = gruen ist 
 
+							//data3[zaehler_x] aktueller Verbrauch aus avg_strom
+							
 							console.log(data3[zaehler_x]);
 							if (hilfsvariable_strom <= data3[zaehler_x]) {
 								L.marker([ data[i].y_koord, data[i].x_koord ],
@@ -190,7 +199,7 @@ body {
 								//data[i].offtime = data[i].offtime + 3;
 								//console.log(data[i].offtime);
 							} else {
-								L.marker([ data[i].y_koord, data[i].x_koord ],
+								 L.marker([ data[i].y_koord, data[i].x_koord ],
 										{
 											icon : greenMarker
 										}).addTo(map);
@@ -203,6 +212,10 @@ body {
 						hilfsvariable_strom = 0;
 						//Mit Hife der Hilfsvariable zaehler_x wird auf die einzelnen AVG-Werte von avg_strom zugegriffen
 						zaehler_x = zaehler_x + 1;
+						
+					//	map.removeLayer(roteMarker);
+					//	map.removeLayer(grueneMarker);
+						
 						//Intervall von 5 Sekunden
 					}, 5 * 1000);
 
@@ -220,6 +233,7 @@ body {
 		}
 
 		map.on('click', onMapClick);
+		
 	</script>
 
 	<div id="chartContainer"
