@@ -28,6 +28,12 @@ public class JavaSpark {
 				return ApacheSpark.avg_strom;
 			}
 		});
-		
+		get("/users", new Route() {
+			@Override
+			public Object handle(Request request, Response response) {
+				// process request
+				return Stromfluss.max_strom;
+			}
+		});
 	}
 }

@@ -50,6 +50,10 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		get("/strom/avg", (req, res) -> {
 			return mapper.writeValueAsString(ApacheSpark.avg_strom);
 		});
+		// Übergabe max_strom  aus Stromfluss.java
+		get("/strom/max", (req, res) -> {
+			return mapper.writeValueAsString(Stromfluss.max_strom);
+		});
 
 
 		

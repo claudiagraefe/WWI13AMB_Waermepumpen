@@ -74,18 +74,19 @@ body {
 					dataPoints : dps
 				} ]
 			});
+			
+			//Wird benötigt um Y-Achsenabschnitt auf den maximalen Strom zu setzen
+			$.getJSON('/strom/max', function(data5) {
+			//Max-Wert y-Achse
+			var yVal = data5;
 
 			//Startwert x-Achse
 			var xVal = -10 ;
-			//Max-Wert y-Achse
-// auf MAX-STROM Setzen ! 
-			var yVal = 1000;
+
 			//Wie schnell sich der Graph voran bewegt 5000 = 5 Sek
 			var updateInterval = 5000;
 			var dataLength = 20; // number of dataPoints visible at any point
 
-	
-			
 			var updateChart = function(count) {
 				count = count || 1;
 			
@@ -118,6 +119,7 @@ body {
 			setInterval(function() {
 				updateChart()
 			}, updateInterval);
+			});
 
 	}
 
