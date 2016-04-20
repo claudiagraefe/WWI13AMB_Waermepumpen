@@ -27,8 +27,7 @@ body {
 }
 </style>
 </head>
-<body onLoad="init();">
-
+<body>
 
 	<script
 		src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
@@ -59,7 +58,7 @@ body {
 	<div id='map'></div>
 
 	<script>
-	
+
 	
 		//Stromgraph zeichnen mit AVG_STROM Werten
 		window.onload = function() {
@@ -77,14 +76,16 @@ body {
 			});
 
 			//Startwert x-Achse
-			var xVal = 0;
+			var xVal = -10 ;
 			//Max-Wert y-Achse
 // auf MAX-STROM Setzen ! 
 			var yVal = 1000;
 			//Wie schnell sich der Graph voran bewegt 5000 = 5 Sek
 			var updateInterval = 5000;
-			var dataLength = 10; // number of dataPoints visible at any point
+			var dataLength = 20; // number of dataPoints visible at any point
 
+	
+			
 			var updateChart = function(count) {
 				count = count || 1;
 			
@@ -92,25 +93,26 @@ body {
 
 				//X-Achse in 5er Schritten und y-Achse mit den AVG-Werten aus ApacheSpark.java avg_strom
 				$.getJSON('/strom/avg', function(data4) {
-					for (var j = 0; j < count; j++) {
+					for (var j = -1; j <= count; j++) {
 						yVal = data4[j];
 						dps.push({
 							x : xVal,
 							y : yVal
 						});
 						xVal = xVal + 5;
+
 					}
 					;
 					if (dps.length > dataLength) {
 						dps.shift();
 					}
-
 					chart.render();
+				
 				});
 			};
 
 			// generates first set of dataPoints
-			updateChart(dataLength);
+			updateChart(dataLength*2);
 
 			// update chart after specified time. 
 			setInterval(function() {
@@ -119,12 +121,14 @@ body {
 
 	}
 
+
 		// Variablendefinition
 		var marker;
 		var hilfsvariable_strom = 0;
 		var zaehler_x = 0;
 		var roteMarker;
 		var grueneMarker;
+		var zeithelfer = -5;
 
 		// Initialisierung MAP, AccessToken von Mapbox
 		L.mapbox.accessToken = 'pk.eyJ1Ijoid2Flcm1lcHVtcGUiLCJhIjoiY2ltZDllMXVxMDAwenZ1bTNtYTBkN3RkbiJ9.QwIUrt30G9NZflUyXCDdEA';
@@ -159,11 +163,15 @@ body {
 
 					// Intervall alle 5 Sekunden
 					setInterval(function() {
+						zeithelfer = zeithelfer + 5;
+						console.log("aktuelle Zeit:" + zeithelfer);
 					
 						//	console.log(data2);
 						// i= geht pro Zeiteinheit die 100 Elemente durch 
 						for (var i = 0; i < 100; i++) {
+							
 
+							//kalmes
 							
 							// Erstellt grüne Marker, die durchnummeriert werden
 							var greenMarker = L.ExtraMarkers.icon({
@@ -189,8 +197,8 @@ body {
 
 							//data3[zaehler_x] aktueller Verbrauch aus avg_strom
 							
-							console.log(data3[zaehler_x]);
-							if (hilfsvariable_strom <= data3[zaehler_x]) {
+							console.log(data3[zaehler_x+1]);
+							if (hilfsvariable_strom <= data3[zaehler_x+1]) {
 								L.marker([ data[i].y_koord, data[i].x_koord ],
 										{
 											icon : redMarker
@@ -218,10 +226,12 @@ body {
 						
 						//Intervall von 5 Sekunden
 					}, 5 * 1000);
+					
 
 				});
 			});
 		});
+		
 
 		// Gibt bei einem Klick auf die Karte die aktuelle Position aus
 		var popup = L.popup();
@@ -233,6 +243,7 @@ body {
 		}
 
 		map.on('click', onMapClick);
+		
 		
 	</script>
 
