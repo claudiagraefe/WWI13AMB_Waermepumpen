@@ -1,8 +1,9 @@
 import java.io.Serializable;
+import java.util.Comparator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Waermepumpe implements Serializable {
+public class Waermepumpe implements Serializable, Comparable<Waermepumpe>  {
 	private int id;
 	private String location;
 	private double x_koord;
@@ -84,4 +85,19 @@ public class Waermepumpe implements Serializable {
 		this.name = name;
 	}
 
+	
+public int compareTo(Waermepumpe waermepumpe){
+	int offtime = waermepumpe.getOfftime();
+	return this.offtime - offtime;
+}
+
+public static Comparator<Waermepumpe> WaermepumpeComparator = new Comparator<Waermepumpe>(){
+	public int compare(Waermepumpe waermepumpe1, Waermepumpe waermepumpe2 ){
+		return waermepumpe1.compareTo(waermepumpe2);
+	}
+};
+
+
+	 
+	 
 }

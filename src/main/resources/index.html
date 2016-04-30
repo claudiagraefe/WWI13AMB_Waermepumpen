@@ -75,6 +75,7 @@ body {
 				} ]
 			});
 			
+
 			//Wird benötigt um Y-Achsenabschnitt auf den maximalen Strom zu setzen
 			$.getJSON('/strom/max', function(data5) {
 			//Max-Wert y-Achse
@@ -159,8 +160,8 @@ body {
 			$.getJSON('/strom/list', function(data2) {
 				//console.log(data2);
 
-				// Daten aus Waermepumpe.java
-				$.getJSON('/wp/list', function(data) {
+				// Daten aus ApacheSpark.java => Waermepumpenliste geordnet nach Offtime
+				$.getJSON('/wp/listneu', function(data) {
 					console.log(data);
 
 					// Intervall alle 5 Sekunden
@@ -178,14 +179,15 @@ body {
 							// Erstellt grüne Marker, die durchnummeriert werden
 							var greenMarker = L.ExtraMarkers.icon({
 								icon : 'fa-number',
-								number : i + 1,
+								number : data[i].name,
 								markerColor : 'green-light'
 							});
 
+						
 							// Erstellt rote Marker, die durchnummeriert werden 
 							var redMarker = L.ExtraMarkers.icon({
 								icon : 'fa-number',
-								number : i + 1,
+								number : data[i].name,
 								markerColor : 'red'
 							});
 
@@ -222,12 +224,13 @@ body {
 						hilfsvariable_strom = 0;
 						//Mit Hife der Hilfsvariable zaehler_x wird auf die einzelnen AVG-Werte von avg_strom zugegriffen
 						zaehler_x = zaehler_x + 1;
+						map.removeLayer(L);
 						
-					//	map.removeLayer(roteMarker);
-					//	map.removeLayer(grueneMarker);
 						
 						//Intervall von 5 Sekunden
 					}, 5 * 1000);
+					
+					
 					
 
 				});

@@ -18,19 +18,19 @@
 			<artifactId>spark-core_2.10</artifactId>
 			<version>1.6.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.10</artifactId>
 			<version>1.6.1</version>
 		</dependency>
+		
 		<!-- Server Socket -->
-		<dependencies>
-			<dependency>
-				<groupId>io.socket</groupId>
-				<artifactId>socket.io-client</artifactId>
-				<version>0.7.0</version>
-			</dependency>
-		</dependencies>
+		<dependency>
+			<groupId>io.socket</groupId>
+			<artifactId>socket.io-client</artifactId>
+			<version>0.7.0</version>
+		</dependency>
 
 		<!-- Dependency Linechart -->
 		<dependency>

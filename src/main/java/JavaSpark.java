@@ -35,5 +35,12 @@ public class JavaSpark {
 				return Stromfluss.max_strom;
 			}
 		});
+		get("/users", new Route() {
+			@Override
+			public Object handle(Request request, Response response) {
+				// process request
+				return ApacheSpark.wpliste_neu;
+			}
+		});
 	}
 }

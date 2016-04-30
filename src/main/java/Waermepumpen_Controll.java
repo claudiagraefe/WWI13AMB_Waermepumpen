@@ -54,7 +54,10 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		get("/strom/max", (req, res) -> {
 			return mapper.writeValueAsString(Stromfluss.max_strom);
 		});
-
+		// Übergabe wpliste_neu  aus ApacheSpark.java
+		get("/wp/listneu", (req, res) -> {
+			return mapper.writeValueAsString(ApacheSpark.wpliste_neu);
+		});
 
 		
 		// Line Chart Initialisierung in der Main

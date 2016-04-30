@@ -1,9 +1,11 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.*;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -14,25 +16,29 @@ import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
+import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.apache.spark.streaming.api.java.JavaDStream;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import scala.Tuple2;
 
-public class ApacheSpark {
+public class ApacheSpark  {
 
 	private static final String host = "localhost";
 	private static final int port = 9999;
 	public static JavaDStream<Double> result;
 	public static double currentValue = 0;
 	public static String currentValue2;
+	public static int hilfsvariable = 0;
+	public static int offtime = 0;
+	public static int offtime_helfer = 0;
+	public static int zeit_zaehler = 0;
 	
+
 	public static List<Double> avg_strom;
+	public static List<Waermepumpe> wpliste_neu;
+	public static PriorityQueue<Waermepumpe> waermepumpenQueue;
+
 
 	private JavaSparkContext sc;
 	private SQLContext sqlContext;
@@ -40,6 +46,10 @@ public class ApacheSpark {
 
 	public ApacheSpark() {
 		avg_strom = new LinkedList<>();
+		wpliste_neu = new ArrayList<>(Waermepumpen_Controll.wpliste);
+
+
+		    
 
 		// Listen on a server socket and on connection send some \n-delimited
 		// text to the client
@@ -60,12 +70,7 @@ public class ApacheSpark {
 					Thread.sleep(1000);
 
 				}
-				// for (; true;) {
-				// out.println(distData2);
-				// // out.println("Das ist ein Test");
-				// out.flush();
-				// Thread.sleep(1000);
-				// }
+
 			}
 
 		} catch (Exception e) {
@@ -96,6 +101,8 @@ public class ApacheSpark {
 		}
 	};
 
+	
+
 	public void testKwhMonotonSteigend() throws Exception {
 
 		// Create a JavaReceiverInputDStream on target ip:port and count the
@@ -108,8 +115,8 @@ public class ApacheSpark {
 
 		// map
 
-//		JavaDStream<String> words = lines.flatMap(x -> Lists.newArrayList(x
-//				.split(" ")));
+		// JavaDStream<String> words = lines.flatMap(x -> Lists.newArrayList(x
+		// .split(" ")));
 
 		JavaDStream<Double> numbers = lines.map(x -> Double.parseDouble(x));
 		JavaDStream<Tuple2<Double, Integer>> numbersAndCount = numbers
@@ -119,33 +126,55 @@ public class ApacheSpark {
 						tuple1._1 + tuple2._1, tuple1._2 + tuple2._2));
 
 		result = sumationResult.map(x -> x._1 / x._2);
-		
+
 		result.foreachRDD(rdd -> {
 			List<Double> values = rdd.collect();
-			for(Double value : values) {
+			for (Double value : values) {
 				System.out.println("nnnnnn: " + value);
 				currentValue = value;
 
+				//AVG-Strom befüllen
 				avg_strom.add(currentValue);
+
+				// 100 Pumpen durchlaufen
+				for (int j = 0; j <= 100; j++) {
+
+					//Arrayliste wpliste_neu durchlaufen
+					for(int q = 0; q< 100; q++){
+
+						
+						hilfsvariable = hilfsvariable + wpliste_neu.get(q).getLeistung();
+						offtime_helfer = wpliste_neu.get(q).getOfftime();
+
+
+					//	if (offtime_helfer == zeit_zaehler) {
+
+							if (hilfsvariable <= currentValue) {
+								offtime = wpliste_neu.get(q).getOfftime() + 5;
+								wpliste_neu.get(q).setOfftime(offtime);
+
+							}
+							//HIER MÜSSTE SORTIERT WERDEN ! 
+						Collections.sort(wpliste_neu);
+						//}
+
+					}
 				
+
+				}
 				
+
+				hilfsvariable = 0;
+				 for (Waermepumpe p : wpliste_neu) {
+					 System.out.println("Offtime: " + p.getOfftime()+ " der Id: " + p.getId());
+				 }
+
 			}
 			for (Double avg : avg_strom) {
 				System.out.println(avg);
 			}
-			
-		});
-	
-	// double test = Double.valueOf(result.glom());
-	//	avg_strom.add(test);
-			
-		// JavaPairDStream<String, Integer> wordCounts = words.mapToPair(
-		// s -> new Tuple2<String, Integer>(s, 7)).reduceByKey(
-		// (i1, i2) -> i1 + i2);
 
-		// JavaPairDStream<String, Integer> wordCounts = words.mapToPair(
-		// s -> new Tuple2<String, Integer>(s, 7)).reduceByKey(
-		// (i1, i2) -> i1 + i2);
+		});
 
 		// WP Liste als RDD laden.
 		JavaRDD<Waermepumpe> distData = sc
@@ -153,9 +182,6 @@ public class ApacheSpark {
 		// akueller_Strom
 		JavaRDD<aktueller_Strom> aktuellerStrom = sc
 				.parallelize(Waermepumpen_Controll.stromliste);
-
-//		distData2 = jssc.sparkContext().parallelize(
-//				Waermepumpen_Controll.wpliste);
 
 		// Table mit dem Namen "waermepumpen" erstellen
 		DataFrame schemaWaermepumpe = sqlContext.createDataFrame(distData,
@@ -190,20 +216,13 @@ public class ApacheSpark {
 				.sql("SELECT strom FROM stromliste");
 		List<String> aktueller_Strom = aktueller_StromResult.javaRDD()
 				.map(strom_function).collect();
-		System.out.println(aktueller_Strom);
+		// System.out.println(aktueller_Strom);
 
-//		wordCounts.print();
 		jssc.start();
 
 		jssc.awaitTermination();
 		jssc.close();
 
 	}
-
-	// map : Nimmt ein individuelles Element im Input RDD und produziert ein
-	// neues Output-Element
-	// rdd.map(new Function<Integer, Integer> (){
-	// public Integer call(Integer x) {return x+1;}
-	// });
 
 }
