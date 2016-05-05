@@ -50,16 +50,15 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		get("/strom/avg", (req, res) -> {
 			return mapper.writeValueAsString(ApacheSpark.avg_strom);
 		});
-		// Übergabe max_strom  aus Stromfluss.java
+		// Übergabe max_strom aus Stromfluss.java
 		get("/strom/max", (req, res) -> {
 			return mapper.writeValueAsString(Stromfluss.max_strom);
 		});
-		// Übergabe wpliste_neu  aus ApacheSpark.java
+		// Übergabe wpliste_neu aus ApacheSpark.java
 		get("/wp/listneu", (req, res) -> {
 			return mapper.writeValueAsString(ApacheSpark.wpliste_neu);
 		});
 
-		
 		// Line Chart Initialisierung in der Main
 		final Waermepumpen_Controll demo = new Waermepumpen_Controll(
 				"Wärmepumpenregelung Heidelberg");
@@ -80,11 +79,13 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 					+ " kW" + ", " + p.getLocation());
 		}
 
+		// Apache Spark Streaming
 		ApacheSpark spark = new ApacheSpark();
-		spark.testKwhMonotonSteigend();
+		spark.sortierenAnhandDerOfftime();
 
 	}
 
+	// Funktion zur Ausgabe des Stromgraphen
 	/**
 	 * @Describtion Constructor fuer Line Chart
 	 * @param title
@@ -123,15 +124,14 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		plot.setBackgroundPaint(Color.lightGray);
 		plot.setRangeGridlinePaint(Color.white);
 
-		// customise the range axis...
+		// range axis anpassen...
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		rangeAxis.setAutoRangeIncludesZero(true);
 
-		// customise the renderer...
+		// renderer anpassen...
 		final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot
 				.getRenderer();
-		// renderer.setDrawShapes(true);
 
 		renderer.setSeriesStroke(0, new BasicStroke(2.0f,
 				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
@@ -142,7 +142,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		renderer.setSeriesStroke(2, new BasicStroke(2.0f,
 				BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
 				new float[] { 2.0f, 6.0f }, 0.0f));
-		// OPTIONAL CUSTOMISATION COMPLETED.
 
 		return chart;
 	}
@@ -168,8 +167,6 @@ public class Waermepumpen_Controll extends ApplicationFrame {
 		}
 	}
 
-	
-	
 	/**
 	 * @Description Initialisierung der Werte des Stromgraphen
 	 * @param sf

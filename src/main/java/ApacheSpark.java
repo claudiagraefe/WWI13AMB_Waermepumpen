@@ -22,7 +22,7 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import scala.Tuple2;
 
-public class ApacheSpark  {
+public class ApacheSpark {
 
 	private static final String host = "localhost";
 	private static final int port = 9999;
@@ -33,12 +33,10 @@ public class ApacheSpark  {
 	public static int offtime = 0;
 	public static int offtime_helfer = 0;
 	public static int zeit_zaehler = 0;
-	
 
 	public static List<Double> avg_strom;
 	public static List<Waermepumpe> wpliste_neu;
 	public static PriorityQueue<Waermepumpe> waermepumpenQueue;
-
 
 	private JavaSparkContext sc;
 	private SQLContext sqlContext;
@@ -48,9 +46,7 @@ public class ApacheSpark  {
 		avg_strom = new LinkedList<>();
 		wpliste_neu = new ArrayList<>(Waermepumpen_Controll.wpliste);
 
-
-		    
-
+		//Initialisieren eines Server-Socket
 		// Listen on a server socket and on connection send some \n-delimited
 		// text to the client
 		new Thread(() -> {
@@ -68,9 +64,7 @@ public class ApacheSpark  {
 					out.flush();
 
 					Thread.sleep(1000);
-
 				}
-
 			}
 
 		} catch (Exception e) {
@@ -78,6 +72,7 @@ public class ApacheSpark  {
 		}
 	}	).start();
 
+		//Erstellen eines neuen JavaSparkContext mit dem Namen "Waermepumpenregelung"
 		SparkConf conf = new SparkConf().setMaster("local[2]")
 				.setAppName("Waermepumpenregelung")
 				.set("spark.driver.allowMultipleContexts", "true");
@@ -87,7 +82,8 @@ public class ApacheSpark  {
 		jssc = new JavaStreamingContext(sc, Durations.seconds(1));
 
 	}
-
+	
+	/*Funktionen für Apache Spark SQL s. Kommentar unten*/
 	private static Function<Row, String> function = new Function<Row, String>() {
 		public String call(Row row) {
 			return "id: " + row.getInt(0) + ", leistung: " + row.getInt(1)
@@ -101,22 +97,11 @@ public class ApacheSpark  {
 		}
 	};
 
-	
+	public void sortierenAnhandDerOfftime() throws Exception {
 
-	public void testKwhMonotonSteigend() throws Exception {
-
-		// Create a JavaReceiverInputDStream on target ip:port and count the
-		// words in input stream of \n delimited text
-
+		//Java DStream 
 		JavaReceiverInputDStream<String> lines = jssc.socketTextStream(host,
 				port, StorageLevels.MEMORY_AND_DISK_SER);
-		// JavaReceiverInputDStream<String> lines =
-		// jssc.sparkContext().parallelize(Waermepumpen_Controll.wpliste);
-
-		// map
-
-		// JavaDStream<String> words = lines.flatMap(x -> Lists.newArrayList(x
-		// .split(" ")));
 
 		JavaDStream<Double> numbers = lines.map(x -> Double.parseDouble(x));
 		JavaDStream<Tuple2<Double, Integer>> numbersAndCount = numbers
@@ -133,41 +118,34 @@ public class ApacheSpark  {
 				System.out.println("nnnnnn: " + value);
 				currentValue = value;
 
-				//AVG-Strom befüllen
+				// AVG-Strom befüllen
 				avg_strom.add(currentValue);
 
 				// 100 Pumpen durchlaufen
 				for (int j = 0; j <= 100; j++) {
 
-					//Arrayliste wpliste_neu durchlaufen
-					for(int q = 0; q< 100; q++){
+					// Arrayliste wpliste_neu durchlaufen
+					for (int q = 0; q < 100; q++) {
 
-						
-						hilfsvariable = hilfsvariable + wpliste_neu.get(q).getLeistung();
+						hilfsvariable = hilfsvariable
+								+ wpliste_neu.get(q).getLeistung();
 						offtime_helfer = wpliste_neu.get(q).getOfftime();
 
+						if (hilfsvariable <= currentValue) {
+							offtime = wpliste_neu.get(q).getOfftime() + 5;
+							wpliste_neu.get(q).setOfftime(offtime);
 
-					//	if (offtime_helfer == zeit_zaehler) {
-
-							if (hilfsvariable <= currentValue) {
-								offtime = wpliste_neu.get(q).getOfftime() + 5;
-								wpliste_neu.get(q).setOfftime(offtime);
-
-							}
-							//HIER MÜSSTE SORTIERT WERDEN ! 
+						}
+						// HIER MÜSSTE SORTIERT WERDEN !
 						Collections.sort(wpliste_neu);
-						//}
-
 					}
-				
-
 				}
-				
 
 				hilfsvariable = 0;
-				 for (Waermepumpe p : wpliste_neu) {
-					 System.out.println("Offtime: " + p.getOfftime()+ " der Id: " + p.getId());
-				 }
+				for (Waermepumpe p : wpliste_neu) {
+					System.out.println("Offtime: " + p.getOfftime()
+							+ " der Id: " + p.getId());
+				}
 
 			}
 			for (Double avg : avg_strom) {
@@ -175,6 +153,10 @@ public class ApacheSpark  {
 			}
 
 		});
+
+		/*-----------------------jetzt folgt Apache Spark SQL, was für Erweiterungen 
+		 *  von Bedeutung sein könnte für den aktuellen Programmablauf
+		 *  jedoch nicht relevant ist---------------------------------------------*/
 
 		// WP Liste als RDD laden.
 		JavaRDD<Waermepumpe> distData = sc

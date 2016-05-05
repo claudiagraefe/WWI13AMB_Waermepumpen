@@ -3,7 +3,7 @@ import java.util.Comparator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Waermepumpe implements Serializable, Comparable<Waermepumpe>  {
+public class Waermepumpe implements Serializable, Comparable<Waermepumpe> {
 	private int id;
 	private String location;
 	private double x_koord;
@@ -36,6 +36,7 @@ public class Waermepumpe implements Serializable, Comparable<Waermepumpe>  {
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	@JsonProperty("leistung")
 	public int getLeistung() {
 		return leistung;
@@ -44,6 +45,7 @@ public class Waermepumpe implements Serializable, Comparable<Waermepumpe>  {
 	public void setLeistung(int leistung) {
 		this.leistung = leistung;
 	}
+
 	@JsonProperty("location")
 	public String getLocation() {
 		return location;
@@ -52,6 +54,7 @@ public class Waermepumpe implements Serializable, Comparable<Waermepumpe>  {
 	public void setLocation(String location) {
 		this.location = location;
 	}
+
 	@JsonProperty("offtime")
 	public int getOfftime() {
 		return offtime;
@@ -85,19 +88,15 @@ public class Waermepumpe implements Serializable, Comparable<Waermepumpe>  {
 		this.name = name;
 	}
 
-	
-public int compareTo(Waermepumpe waermepumpe){
-	int offtime = waermepumpe.getOfftime();
-	return this.offtime - offtime;
-}
-
-public static Comparator<Waermepumpe> WaermepumpeComparator = new Comparator<Waermepumpe>(){
-	public int compare(Waermepumpe waermepumpe1, Waermepumpe waermepumpe2 ){
-		return waermepumpe1.compareTo(waermepumpe2);
+	public int compareTo(Waermepumpe waermepumpe) {
+		int offtime = waermepumpe.getOfftime();
+		return this.offtime - offtime;
 	}
-};
 
+	public static Comparator<Waermepumpe> WaermepumpeComparator = new Comparator<Waermepumpe>() {
+		public int compare(Waermepumpe waermepumpe1, Waermepumpe waermepumpe2) {
+			return waermepumpe1.compareTo(waermepumpe2);
+		}
+	};
 
-	 
-	 
 }
