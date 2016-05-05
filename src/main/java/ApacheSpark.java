@@ -219,7 +219,6 @@ public class ApacheSpark  {
 		// System.out.println(aktueller_Strom);
 
 		jssc.start();
-
 		jssc.awaitTermination();
 		jssc.close();
 
